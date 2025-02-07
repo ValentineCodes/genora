@@ -77,6 +77,7 @@ export function useUniversalProfile() {
 export function UniversalProfileProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   // State for the Profile provider
   const account = useAccount();
+
   const [profile, setProfile] = useState<Profile | null>(null);
   const [issuedAssets, setIssuedAssets] = useState<string[]>([]);
 

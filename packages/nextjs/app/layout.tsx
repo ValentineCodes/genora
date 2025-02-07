@@ -1,6 +1,6 @@
 import "@rainbow-me/rainbowkit/styles.css";
-import { ScaffoldEthAppWithProviders } from "~~/components/providers/ScaffoldEthAppWithProviders";
 import { ThemeProvider } from "~~/components/ThemeProvider";
+import { ScaffoldEthAppWithProviders } from "~~/components/providers/ScaffoldEthAppWithProviders";
 import "~~/styles/globals.css";
 import { getMetadata } from "~~/utils/scaffold-eth/getMetadata";
 

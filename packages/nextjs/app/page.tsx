@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import type { NextPage } from "next";
-import { useAccount } from "wagmi";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { Address } from "~~/components/scaffold-eth";
+import { useUPProvider } from "~~/contexts/UPProviderContext";
 
 const Home: NextPage = () => {
-  const { address: connectedAddress } = useAccount();
+  const { accounts, contextAccounts } = useUPProvider();
 
   return (
     <>
@@ -18,8 +18,12 @@ const Home: NextPage = () => {
             <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
           </h1>
           <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
-            <p className="my-2 font-medium">Connected Address:</p>
-            <Address address={connectedAddress} />
+            <p className="my-2 font-medium">Connected Account:</p>
+            {accounts.length > 0 && <Address address={accounts[0]} />}
+          </div>
+          <div className="flex justify-center items-center space-x-2 flex-col sm:flex-row">
+            <p className="my-2 font-medium">Context Address:</p>
+            {contextAccounts.length > 0 && <Address address={contextAccounts[0]} />}
           </div>
 
           <p className="text-center text-lg">

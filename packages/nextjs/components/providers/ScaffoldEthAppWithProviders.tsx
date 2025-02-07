@@ -10,9 +10,10 @@ import { WagmiProvider } from "wagmi";
 import { Footer } from "~~/components/Footer";
 import { Header } from "~~/components/Header";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
+import { UPProvider } from "~~/contexts/UPProviderContext";
+import { UniversalProfileProvider } from "~~/contexts/UniversalProfileContext";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
-import { UniversalProfileProvider } from "~~/contexts/UniversalProfileContext";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
@@ -54,9 +55,11 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
           avatar={BlockieAvatar}
           theme={mounted ? (isDarkMode ? darkTheme() : lightTheme()) : lightTheme()}
         >
-          <UniversalProfileProvider>
-            <ScaffoldEthApp>{children}</ScaffoldEthApp>
-          </UniversalProfileProvider>
+          <UPProvider>
+            <UniversalProfileProvider>
+              <ScaffoldEthApp>{children}</ScaffoldEthApp>
+            </UniversalProfileProvider>
+          </UPProvider>
         </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

@@ -49,8 +49,8 @@
     "add:contract": "yarn workspace @se-2/hardhat add",
     "remove:frontend": "yarn workspace @se-2/nextjs remove",
     "remove:contract": "yarn workspace @se-2/hardhat remove",
-    "format:frontend": "yarn workspace @se-2/nextjs format:write",
-    "format:contract": "yarn workspace @se-2/hardhat format:write"
+    "format:frontend": "yarn workspace @se-2/nextjs format",
+    "format:contract": "yarn workspace @se-2/hardhat format"
   },
   "devDependencies": {
     "husky": "~8.0.3",

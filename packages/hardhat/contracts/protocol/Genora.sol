@@ -105,4 +105,43 @@ contract Genora is IGenora {
         // Emit the donation event
         emit Donated(_id, msg.sender, msg.value, block.timestamp);
     }
+
+    // ==========================
+    // Getters
+    // ==========================
+
+    /// @inheritdoc IGenora
+    function getProposalById(uint256 _id) external view returns (DataTypes.Proposal memory) {
+        return s_proposalById[_id];
+    }
+
+    /// @inheritdoc IGenora
+    function getDonationsById(uint256 _id) external view returns (DataTypes.Donation[] memory) {
+        return s_donations[_id];
+    }
+
+    /// @inheritdoc IGenora
+    function getProposalsByProposer(address _proposer) external view returns (DataTypes.Proposal[] memory) {
+        return s_proposals[_proposer];
+    }
+
+    /// @inheritdoc IGenora
+    function getFundedProposalsByDonor(address _donor) external view returns (DataTypes.Proposal[] memory) {
+        return s_fundedProposals[_donor];
+    }
+
+    /// @inheritdoc IGenora
+    function hasDonated(address _donor, uint256 _id) external view returns (bool) {
+        return s_hasDonated[_donor][_id];
+    }
+
+    /// @inheritdoc IGenora
+    function getAllProposals() external view returns (DataTypes.Proposal[] memory) {
+        return s_allProposals;
+    }
+
+    /// @inheritdoc IGenora
+    function getTotalProposals() external view returns (uint256) {
+        return s_totalProposals;
+    }
 }

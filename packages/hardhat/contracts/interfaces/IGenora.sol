@@ -54,4 +54,52 @@ interface IGenora {
      * @param _id The unique identifier of the proposal to donate to.
      */
     function donate(uint256 _id) external payable;
+
+    /**
+     * @notice Retrieves a proposal by its ID.
+     * @param _id The unique proposal ID.
+     * @return The Proposal struct associated with the given ID.
+     */
+    function getProposalById(uint256 _id) external view returns (DataTypes.Proposal memory);
+
+    /**
+     * @notice Retrieves all donations for a given proposal ID.
+     * @param _id The unique proposal ID.
+     * @return An array of Donation structs associated with the proposal.
+     */
+    function getDonationsById(uint256 _id) external view returns (DataTypes.Donation[] memory);
+
+    /**
+     * @notice Retrieves all proposals submitted by a given proposer.
+     * @param _proposer The address of the proposer.
+     * @return An array of Proposal structs created by the proposer.
+     */
+    function getProposalsByProposer(address _proposer) external view returns (DataTypes.Proposal[] memory);
+
+    /**
+     * @notice Retrieves all proposals a donor has contributed to.
+     * @param _donor The address of the donor.
+     * @return An array of Proposal structs that the donor has funded.
+     */
+    function getFundedProposalsByDonor(address _donor) external view returns (DataTypes.Proposal[] memory);
+
+    /**
+     * @notice Checks if a given donor has contributed to a specific proposal.
+     * @param _donor The donor’s address.
+     * @param _id The proposal ID.
+     * @return True if the donor has donated to the proposal, otherwise false.
+     */
+    function hasDonated(address _donor, uint256 _id) external view returns (bool);
+
+    /**
+     * @notice Retrieves all proposals submitted to the contract.
+     * @return An array of all Proposal structs.
+     */
+    function getAllProposals() external view returns (DataTypes.Proposal[] memory);
+
+    /**
+     * @notice Retrieves the total number of proposals created.
+     * @return The total count of proposals.
+     */
+    function getTotalProposals() external view returns (uint256);
 }

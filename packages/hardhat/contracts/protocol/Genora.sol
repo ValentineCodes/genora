@@ -16,6 +16,8 @@ contract Genora is IGenora {
     error Genora__ZeroValue();
     error Genora__EmptyTitle();
     error Genora__EmptyDescription();
+    error Genora__InvalidProposal();
+    error Genora__TransferFailed();
 
     // ==========================
     // State Variables
@@ -46,11 +48,7 @@ contract Genora is IGenora {
     // Functions
     // ==========================
 
-    /**
-     * @notice Creates a new proposal.
-     * @dev Ensures the proposal has valid inputs before storing it.
-     * @param _proposal Struct containing proposal details such as title, description, and recipient address.
-     */
+    /// @inheritdoc IGenora
     function propose(DataTypes.ProposalParams calldata _proposal) external {
         require(bytes(_proposal.title).length != 0, Genora__EmptyTitle());
         require(bytes(_proposal.description).length != 0, Genora__EmptyDescription());
@@ -82,5 +80,29 @@ contract Genora is IGenora {
             _proposal.recipientAddress,
             block.timestamp
         );
+    }
+
+    /// @inheritdoc IGenora
+    function donate(uint256 _id) external payable {
+        DataTypes.Proposal memory proposal = s_proposalById[_id];
+
+        if (proposal.id == 0) revert Genora__InvalidProposal();
+        if (msg.value == 0) revert Genora__ZeroValue();
+
+        // Transfer the donation to the recipient address
+        (bool success, ) = proposal.recipientAddress.call{ value: msg.value }("");
+        if (!success) revert Genora__TransferFailed();
+
+        // Record the donation
+        s_donations[_id].push(DataTypes.Donation({ donor: msg.sender, amount: msg.value, timestamp: block.timestamp }));
+
+        // Track donor's funded proposals if it's their first donation to this proposal
+        if (!s_hasDonated[msg.sender][_id]) {
+            s_fundedProposals[msg.sender].push(proposal);
+            s_hasDonated[msg.sender][_id] = true;
+        }
+
+        // Emit the donation event
+        emit Donated(_id, msg.sender, msg.value, block.timestamp);
     }
 }

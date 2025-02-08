@@ -22,6 +22,7 @@ const deployGenora: DeployFunction = async function (hre: HardhatRuntimeEnvironm
 
   await deploy("Genora", {
     from: deployer,
+    args: [deployer], // Set deployer as the initial fee collector
     log: true,
     // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
     // automatically mining the contract deployment transaction. There is no effect on live networks.

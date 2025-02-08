@@ -18,10 +18,14 @@ contract Genora is IGenora {
     error Genora__EmptyDescription();
     error Genora__InvalidProposal();
     error Genora__TransferFailed();
+    error Genora__Unauthorized();
 
     // ==========================
     // State Variables
     // ==========================
+
+    address private s_feeCollector; // Address of the fee collector
+    uint256 private s_feeBalance; // Accumulated fees in the contract
 
     /// @dev Mapping of proposal ID to its corresponding Proposal data
     mapping(uint256 => DataTypes.Proposal) private s_proposalById;
@@ -43,6 +47,14 @@ contract Genora is IGenora {
 
     /// @dev Counter for total proposals submitted
     uint256 private s_totalProposals;
+
+    // ==========================
+    // Constructor
+    // ==========================
+    constructor(address _feeCollector) {
+        require(_feeCollector != address(0), Genora__ZeroAddress());
+        s_feeCollector = _feeCollector;
+    }
 
     // ==========================
     // Functions
@@ -89,8 +101,13 @@ contract Genora is IGenora {
         require(proposal.id != 0, Genora__InvalidProposal());
         require(msg.value > 0, Genora__ZeroValue());
 
-        // Transfer the donation to the recipient address
-        (bool success, ) = proposal.recipientAddress.call{ value: msg.value }("");
+        uint256 fee = msg.value / 100; // 1% fee
+        uint256 recipientAmount = msg.value - fee;
+
+        s_feeBalance += fee; // Store collected fees
+
+        // Transfer the donation (99%) to the recipient
+        (bool success, ) = proposal.recipientAddress.call{ value: recipientAmount }("");
         require(success, Genora__TransferFailed());
 
         // Record the donation
@@ -104,6 +121,27 @@ contract Genora is IGenora {
 
         // Emit the donation event
         emit Donated(_id, msg.sender, msg.value, block.timestamp);
+    }
+
+    /// @inheritdoc IGenora
+    function withdrawFees() external {
+        require(msg.sender == s_feeCollector, Genora__Unauthorized());
+        uint256 amount = s_feeBalance;
+        s_feeBalance = 0;
+
+        (bool success, ) = s_feeCollector.call{ value: amount }("");
+        require(success, Genora__TransferFailed());
+
+        emit FeeWithdrawn(s_feeCollector, amount);
+    }
+
+    /// @inheritdoc IGenora
+    function setFeeCollector(address _newCollector) external {
+        require(msg.sender == s_feeCollector, Genora__Unauthorized());
+        require(_newCollector != address(0), Genora__ZeroAddress());
+
+        emit FeeCollectorUpdated(s_feeCollector, _newCollector);
+        s_feeCollector = _newCollector;
     }
 
     // ==========================
@@ -143,5 +181,15 @@ contract Genora is IGenora {
     /// @inheritdoc IGenora
     function getTotalProposals() external view returns (uint256) {
         return s_totalProposals;
+    }
+
+    /// @inheritdoc IGenora
+    function getFeeCollector() external view returns (address) {
+        return s_feeCollector;
+    }
+
+    /// @inheritdoc IGenora
+    function getFeeBalance() external view returns (uint256) {
+        return s_feeBalance;
     }
 }

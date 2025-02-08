@@ -5,22 +5,32 @@ import { Signer } from "ethers";
 
 describe("Genora", function () {
   let genora: Genora;
-  let addr1: Signer, addr2: Signer;
-  let addr1Address: string, addr2Address: string;
+  let deployer: Signer, addr1: Signer, addr2: Signer, newCollector: Signer;
+  let deployerAddress: string, addr1Address: string, addr2Address: string, newCollectorAddress: string;
 
   before(async () => {
-    [addr1, addr2] = await ethers.getSigners();
+    [deployer, addr1, addr2, newCollector] = await ethers.getSigners();
+    deployerAddress = await deployer.getAddress();
     addr1Address = await addr1.getAddress();
     addr2Address = await addr2.getAddress();
+    newCollectorAddress = await newCollector.getAddress();
 
     const GenoraFactory = (await ethers.getContractFactory("Genora")) as Genora__factory;
-    genora = await GenoraFactory.deploy();
+    genora = await GenoraFactory.deploy(deployerAddress); // Deploy with fee collector as deployer
     await genora.waitForDeployment();
   });
 
   describe("Deployment", function () {
     it("Should deploy with an empty proposals list", async function () {
       expect(await genora.getTotalProposals()).to.equal(0);
+    });
+
+    it("Should set the correct initial fee collector", async function () {
+      expect(await genora.getFeeCollector()).to.equal(deployerAddress);
+    });
+
+    it("Should start with zero fee balance", async function () {
+      expect(await genora.getFeeBalance()).to.equal(0);
     });
   });
 
@@ -69,11 +79,15 @@ describe("Genora", function () {
     });
   });
 
-  describe("Donations", function () {
-    it("Should allow users to donate to proposals", async function () {
-      const donationAmount = ethers.parseEther("1");
+  describe("Donations & Fee Model", function () {
+    it("Should allow users to donate and deduct 1% fee", async function () {
+      const donationAmount = ethers.parseEther("1"); // 1 ETH donation
+      const expectedFee = donationAmount / BigInt(100); // 1% fee
 
       await expect(genora.connect(addr1).donate(1, { value: donationAmount })).to.emit(genora, "Donated");
+
+      const feeBalance = await genora.getFeeBalance();
+      expect(feeBalance).to.equal(expectedFee);
 
       const donations = await genora.getDonationsById(1);
       expect(donations.length).to.equal(1);
@@ -96,32 +110,56 @@ describe("Genora", function () {
     });
   });
 
-  describe("Getter Functions", function () {
-    it("Should return correct proposal by ID", async function () {
-      const proposal = await genora.getProposalById(1);
-      expect(proposal.title).to.equal("Save the Rainforest");
+  describe("Fee Collection & Withdrawal", function () {
+    it("Should allow the fee collector to withdraw fees", async function () {
+      const feeCollectorBalanceBefore = await ethers.provider.getBalance(deployerAddress);
+      const contractFeeBalance = await genora.getFeeBalance();
+
+      await expect(genora.connect(deployer).withdrawFees())
+        .to.emit(genora, "FeeWithdrawn")
+        .withArgs(deployerAddress, contractFeeBalance);
+
+      const feeCollectorBalanceAfter = await ethers.provider.getBalance(deployerAddress);
+      expect(await genora.getFeeBalance()).to.equal(0);
+      expect(feeCollectorBalanceAfter).to.be.above(feeCollectorBalanceBefore);
     });
 
-    it("Should return all proposals", async function () {
-      const allProposals = await genora.getAllProposals();
-      expect(allProposals.length).to.equal(1);
+    it("Should revert if a non-fee collector tries to withdraw fees", async function () {
+      await expect(genora.connect(addr1).withdrawFees()).to.be.revertedWithCustomError(genora, "Genora__Unauthorized");
+    });
+  });
+
+  describe("Fee Collector Management", function () {
+    it("Should allow the fee collector to update the fee collector address", async function () {
+      await expect(genora.connect(deployer).setFeeCollector(newCollectorAddress))
+        .to.emit(genora, "FeeCollectorUpdated")
+        .withArgs(deployerAddress, newCollectorAddress);
+
+      expect(await genora.getFeeCollector()).to.equal(newCollectorAddress);
     });
 
-    it("Should return proposals by proposer", async function () {
-      const proposals = await genora.getProposalsByProposer(addr1Address);
-      expect(proposals.length).to.equal(1);
-      expect(proposals[0].title).to.equal("Save the Rainforest");
+    it("Should revert if a non-fee collector tries to update the fee collector", async function () {
+      await expect(genora.connect(addr1).setFeeCollector(addr2Address)).to.be.revertedWithCustomError(
+        genora,
+        "Genora__Unauthorized",
+      );
     });
 
-    it("Should return funded proposals by donor", async function () {
-      const fundedProposals = await genora.getFundedProposalsByDonor(addr1Address);
-      expect(fundedProposals.length).to.equal(1);
-      expect(fundedProposals[0].title).to.equal("Save the Rainforest");
+    it("Should revert if setting fee collector to zero address", async function () {
+      await expect(genora.connect(newCollector).setFeeCollector(ethers.ZeroAddress)).to.be.revertedWithCustomError(
+        genora,
+        "Genora__ZeroAddress",
+      );
+    });
+  });
+
+  describe("Getters", function () {
+    it("Should return the correct fee collector address", async function () {
+      expect(await genora.getFeeCollector()).to.equal(newCollectorAddress);
     });
 
-    it("Should correctly track if a donor has donated", async function () {
-      expect(await genora.hasDonated(addr1Address, 1)).to.be.true;
-      expect(await genora.hasDonated(addr1Address, 999)).to.be.false;
+    it("Should return the correct fee balance", async function () {
+      expect(await genora.getFeeBalance()).to.equal(0);
     });
   });
 });

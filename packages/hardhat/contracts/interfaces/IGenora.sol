@@ -40,6 +40,24 @@ interface IGenora {
     event Donated(uint256 indexed id, address indexed donor, uint256 amount, uint256 timestamp);
 
     /**
+     * @dev Emitted when the fee collector withdraws accumulated fees.
+     * @param collector The address of the fee collector withdrawing the funds.
+     * @param amount The amount of fees withdrawn.
+     */
+    event FeeWithdrawn(address indexed collector, uint256 amount);
+
+    /**
+     * @dev Emitted when the fee collector address is updated.
+     * @param oldCollector The previous fee collector address.
+     * @param newCollector The new fee collector address.
+     */
+    event FeeCollectorUpdated(address indexed oldCollector, address indexed newCollector);
+
+    // ==========================
+    // Functions
+    // ==========================
+
+    /**
      * @notice Creates a new proposal.
      * @dev Ensures the proposal has valid inputs before storing it.
      * @param _proposal Struct containing proposal details such as title, description, and recipient address.
@@ -54,6 +72,14 @@ interface IGenora {
      * @param _id The unique identifier of the proposal to donate to.
      */
     function donate(uint256 _id) external payable;
+
+    /// @notice Withdraws accumulated fees to the fee collector.
+    function withdrawFees() external;
+
+    /// @notice Updates the fee collector address.
+    /// @dev Only the current fee collector can call this.
+    /// @param _newCollector The address of the new fee collector.
+    function setFeeCollector(address _newCollector) external;
 
     /**
      * @notice Retrieves a proposal by its ID.
@@ -102,4 +128,16 @@ interface IGenora {
      * @return The total count of proposals.
      */
     function getTotalProposals() external view returns (uint256);
+
+    /**
+     * @notice Returns the address of the fee collector.
+     * @return The address of the current fee collector.
+     */
+    function getFeeCollector() external view returns (address);
+
+    /**
+     * @notice Returns the current fee balance accumulated in the contract.
+     * @return The total fee balance stored in the contract.
+     */
+    function getFeeBalance() external view returns (uint256);
 }

@@ -86,12 +86,12 @@ contract Genora is IGenora {
     function donate(uint256 _id) external payable {
         DataTypes.Proposal memory proposal = s_proposalById[_id];
 
-        if (proposal.id == 0) revert Genora__InvalidProposal();
-        if (msg.value == 0) revert Genora__ZeroValue();
+        require(proposal.id != 0, Genora__InvalidProposal());
+        require(msg.value > 0, Genora__ZeroValue());
 
         // Transfer the donation to the recipient address
         (bool success, ) = proposal.recipientAddress.call{ value: msg.value }("");
-        if (!success) revert Genora__TransferFailed();
+        require(success, Genora__TransferFailed());
 
         // Record the donation
         s_donations[_id].push(DataTypes.Donation({ donor: msg.sender, amount: msg.value, timestamp: block.timestamp }));

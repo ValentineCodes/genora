@@ -10,6 +10,17 @@ const deployedContracts = {
       address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_feeCollector",
+              type: "address",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "constructor",
+        },
+        {
           inputs: [],
           name: "Genora__EmptyDescription",
           type: "error",
@@ -27,6 +38,11 @@ const deployedContracts = {
         {
           inputs: [],
           name: "Genora__TransferFailed",
+          type: "error",
+        },
+        {
+          inputs: [],
+          name: "Genora__Unauthorized",
           type: "error",
         },
         {
@@ -68,6 +84,44 @@ const deployedContracts = {
             },
           ],
           name: "Donated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "oldCollector",
+              type: "address",
+            },
+            {
+              indexed: true,
+              internalType: "address",
+              name: "newCollector",
+              type: "address",
+            },
+          ],
+          name: "FeeCollectorUpdated",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: true,
+              internalType: "address",
+              name: "collector",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+          ],
+          name: "FeeWithdrawn",
           type: "event",
         },
         {
@@ -202,6 +256,32 @@ const deployedContracts = {
               internalType: "struct DataTypes.Donation[]",
               name: "",
               type: "tuple[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getFeeBalance",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getFeeCollector",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
             },
           ],
           stateMutability: "view",
@@ -423,6 +503,26 @@ const deployedContracts = {
             },
           ],
           name: "propose",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_newCollector",
+              type: "address",
+            },
+          ],
+          name: "setFeeCollector",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "withdrawFees",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",

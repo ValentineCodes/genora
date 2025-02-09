@@ -5,7 +5,7 @@ import Hero from "~~/components/Hero";
 
 const Home: NextPage = () => {
   return (
-    <main>
+    <main className="bg-white">
       <Hero />
     </main>
   );

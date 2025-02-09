@@ -15,7 +15,7 @@ export default function Hero({}: Props) {
       <div className="flex-[1.5] flex flex-col h-[50vh] items-center gap-3 py-10 text-center">
         <div className="flex items-center gap-2 border border-black rounded-xl px-4 py-1 mb-4">
           <img src="./icons/rocket.png" className="w-4 aspect-square" />
-          <strong className="text-sm">Small effort, BIG change</strong>
+          <text className="text-sm">Small effort, BIG change</text>
         </div>
 
         <h1 className="text-4xl font-bold max-w-[480px] leading-normal">Empower Change with Every Donation</h1>

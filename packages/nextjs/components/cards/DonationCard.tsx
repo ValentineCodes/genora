@@ -17,7 +17,7 @@ export default function DonationCard({ title, description, timestamp, total, hid
       </div>
 
       {!hideFooter && (
-        <div className="bg-gray-200 px-4 py-2 flex justify-between items-center">
+        <div className="bg-gray-200 px-4 py-2 flex justify-between items-center rounded-b-lg">
           <div>
             <text className="text-xs">Sept 4, 2025</text>
           </div>

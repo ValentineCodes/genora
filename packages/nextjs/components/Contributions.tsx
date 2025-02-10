@@ -1,14 +1,17 @@
 import React from "react";
 import Proposal from "./cards/Proposal";
+import { useAccount } from "wagmi";
 import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import { Proposal as ProposalType } from "~~/types/contract";
 
 type Props = {};
 
 export default function Contributions({}: Props) {
+  const account = useAccount();
   const { data: proposals } = useScaffoldReadContract({
     contractName: "Genora",
-    functionName: "getAllProposals",
+    functionName: "getFundedProposalsByDonor",
+    args: [account.address],
   });
 
   return (
@@ -19,7 +22,11 @@ export default function Contributions({}: Props) {
       </header>
 
       <div className="mt-8 flex gap-4">
-        {proposals?.map((proposal: ProposalType) => <Proposal key={proposal.id.toString()} proposal={proposal} />)}
+        {proposals && proposals.length > 0 ? (
+          proposals.map((proposal: ProposalType) => <Proposal key={proposal.id.toString()} proposal={proposal} />)
+        ) : (
+          <p className="text-2xl text-gray-400">You haven't made any contributions</p>
+        )}
       </div>
     </section>
   );

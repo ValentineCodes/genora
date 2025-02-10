@@ -2,15 +2,13 @@ import React from "react";
 import ProfileImage from "./ProfileImage";
 import { HStack } from "@chakra-ui/react";
 import { RiHeartAdd2Line } from "react-icons/ri";
-import Showdown from "showdown";
 import { Proposal as ProposalType } from "~~/types/contract";
+import { convertMarkdown } from "~~/utils/helpers";
 import { parseTimestamp } from "~~/utils/scaffold-eth/parseTimestamp";
 
 type Props = {
   proposal: ProposalType;
 };
-
-const converter = new Showdown.Converter();
 
 export default function ProposalDetails({ proposal }: Props) {
   return (
@@ -19,7 +17,7 @@ export default function ProposalDetails({ proposal }: Props) {
       <text className="text-xs mb-4">{parseTimestamp(proposal.timestamp)}</text>
       <div
         className="overflow-auto flex-1"
-        dangerouslySetInnerHTML={{ __html: converter.makeHtml(proposal.description) }}
+        dangerouslySetInnerHTML={{ __html: convertMarkdown(proposal.description) }}
       ></div>
 
       <HStack className="self-end mt-4">

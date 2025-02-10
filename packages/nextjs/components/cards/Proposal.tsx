@@ -5,6 +5,7 @@ import { HStack } from "@chakra-ui/react";
 import { RiHeartAdd2Line } from "react-icons/ri";
 import { DialogContent, DialogRoot, DialogTrigger } from "~~/components/ui/dialog";
 import { Proposal as ProposalType } from "~~/types/contract";
+import { convertMarkdown, truncateWords } from "~~/utils/helpers";
 import { parseTimestamp } from "~~/utils/scaffold-eth/parseTimestamp";
 
 type Props = {
@@ -18,7 +19,10 @@ export default function Proposal({ proposal }: Props) {
         <DialogTrigger asChild>
           <div className="flex flex-col flex-1 justify-center items-center text-center cursor-pointer">
             <h1 className="text-lg font-semibold max-w-[75%]">{proposal.title}</h1>
-            <text className="text-xs max-w-[75%]">{proposal.description}</text>
+            <text
+              className="text-xs max-w-[75%]"
+              dangerouslySetInnerHTML={{ __html: convertMarkdown(truncateWords(proposal.description)) }}
+            ></text>
           </div>
         </DialogTrigger>
 

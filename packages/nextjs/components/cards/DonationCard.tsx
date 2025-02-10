@@ -30,7 +30,9 @@ export default function DonationCard({ title, description, timestamp, total, hid
       </DialogRoot>
 
       {hideFooter ? (
-        <div className="w-5 aspect-square border border-black rounded-full absolute bottom-2 right-2"></div>
+        <div className="w-5 aspect-square rounded-full absolute bottom-2 right-2">
+          <ProfileImage address="0x29d7c7E4571a83B3eF5C867f75c81D736a9D58aa" />
+        </div>
       ) : (
         <div className="p-2 flex justify-between items-center rounded-b-lg">
           <div>

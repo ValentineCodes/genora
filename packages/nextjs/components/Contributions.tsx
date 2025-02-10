@@ -1,32 +1,16 @@
 import React from "react";
-import DonationCard from "./cards/DonationCard";
+import Proposal from "./cards/Proposal";
+import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
+import { Proposal as ProposalType } from "~~/types/contract";
 
 type Props = {};
 
-const donations = [
-  {
-    title: "Gitcoin",
-    description: "Labore voluptate tempor nostrud eiusmod Lorem tempor qui.",
-  },
-  {
-    title: "StakingVerse",
-    description: "Labore voluptate tempor nostrud eiusmod Lorem tempor qui.",
-  },
-  {
-    title: "Keez",
-    description: "Labore voluptate tempor nostrud eiusmod Lorem tempor qui.",
-  },
-  {
-    title: "SpeedRunLukso",
-    description: "Labore voluptate tempor nostrud eiusmod Lorem tempor qui.",
-  },
-  {
-    title: "Kitso",
-    description: "Labore voluptate tempor nostrud eiusmod Lorem tempor qui.",
-  },
-];
-
 export default function Contributions({}: Props) {
+  const { data: proposals } = useScaffoldReadContract({
+    contractName: "Genora",
+    functionName: "getAllProposals",
+  });
+
   return (
     <section id="contributions" className="flex flex-col min-h-[50vh] max-w-[1200px] mx-auto py-12">
       <header>
@@ -35,9 +19,7 @@ export default function Contributions({}: Props) {
       </header>
 
       <div className="mt-8 flex gap-4">
-        {donations.map(donation => (
-          <DonationCard key={donation.title} title={donation.title} description={donation.description} hideFooter />
-        ))}
+        {proposals?.map((proposal: ProposalType) => <Proposal key={proposal.id.toString()} proposal={proposal} />)}
       </div>
     </section>
   );

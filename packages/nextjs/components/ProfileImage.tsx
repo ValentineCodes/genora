@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { ERC725, ERC725JSONSchema } from "@erc725/erc725.js";
 import lsp3ProfileSchema from "@erc725/erc725.js/schemas/LSP3ProfileMetadata.json";

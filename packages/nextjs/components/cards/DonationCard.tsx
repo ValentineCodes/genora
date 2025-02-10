@@ -1,4 +1,5 @@
 import React from "react";
+import { CiHeart } from "react-icons/ci";
 
 type Props = {
   title: string;
@@ -17,14 +18,12 @@ export default function DonationCard({ title, description, timestamp, total, hid
       </div>
 
       {!hideFooter && (
-        <div className="bg-gray-200 px-4 py-2 flex justify-between items-center rounded-b-lg">
+        <div className="px-4 py-2 flex justify-between items-center rounded-b-lg">
           <div>
             <text className="text-xs">Sept 4, 2025</text>
           </div>
 
-          <button className="bg-gray-500 text-white hover:bg-white px-4 py-1 hover:text-gray-500 border hover:border-gray-500 rounded-3xl font-light duration-200 text-xs">
-            <text>Support</text>
-          </button>
+          <CiHeart className="text-2xl text-red-500" />
         </div>
       )}
     </div>

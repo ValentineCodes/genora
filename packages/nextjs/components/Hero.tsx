@@ -1,4 +1,6 @@
 import React from "react";
+import ProposalForm from "./forms/ProposalForm";
+import { PopoverContent, PopoverTrigger } from "~~/components/ui/popover";
 
 type Props = {};
 
@@ -23,9 +25,15 @@ export default function Hero({}: Props) {
           Esse fugiat dolor anim ea ipsum do Lorem voluptate adipisicing laboris qui qui.
         </text>
 
-        <button className="bg-gray-500 text-white hover:bg-white px-8 py-2 hover:text-gray-500 border hover:border-gray-500 rounded-3xl font-light duration-200 mt-4 text-sm">
-          <text>I need support</text>
-        </button>
+        <PopoverTrigger>
+          <button className="bg-gray-500 text-white hover:bg-white px-8 py-2 hover:text-gray-500 border hover:border-gray-500 rounded-3xl font-light duration-200 mt-4 text-sm">
+            <text>I need support</text>
+          </button>
+        </PopoverTrigger>
+
+        <PopoverContent>
+          <ProposalForm />
+        </PopoverContent>
       </div>
 
       <div id="heroes" className="flex-1 h-[50vh] relative">

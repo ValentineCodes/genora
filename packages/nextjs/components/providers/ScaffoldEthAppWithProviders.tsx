@@ -8,6 +8,7 @@ import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
 import { useTheme } from "next-themes";
 import { WagmiProvider } from "wagmi";
 import { BlockieAvatar } from "~~/components/scaffold-eth";
+import { Provider as ChakraProvider } from "~~/components/ui/provider";
 import { UPProvider } from "~~/contexts/UPProviderContext";
 import { UniversalProfileProvider } from "~~/contexts/UniversalProfileContext";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
@@ -20,7 +21,9 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html lang="en">
-      <body className={font.className}>{children}</body>
+      <body className={font.className}>
+        <ChakraProvider>{children}</ChakraProvider>
+      </body>
     </html>
   );
 };

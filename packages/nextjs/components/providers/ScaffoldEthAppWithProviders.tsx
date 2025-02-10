@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Poppins } from "next/font/google";
+import { Header } from "../Header";
 import { RainbowKitProvider, darkTheme, lightTheme } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppProgressBar as ProgressBar } from "next-nprogress-bar";
@@ -22,6 +23,7 @@ const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
       <body className={font.className}>
+        <Header />
         <ChakraProvider>{children}</ChakraProvider>
       </body>
     </html>

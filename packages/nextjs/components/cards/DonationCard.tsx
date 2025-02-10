@@ -1,5 +1,6 @@
 import React from "react";
-import { CiHeart } from "react-icons/ci";
+import { HStack } from "@chakra-ui/react";
+import { RiHeartAdd2Line } from "react-icons/ri";
 
 type Props = {
   title: string;
@@ -23,7 +24,10 @@ export default function DonationCard({ title, description, timestamp, total, hid
             <text className="text-xs">Sept 4, 2025</text>
           </div>
 
-          <CiHeart className="text-2xl text-red-500" />
+          <HStack>
+            <div className="w-5 aspect-square border border-black rounded-full"></div>
+            <RiHeartAdd2Line className="text-2xl text-red-500" />
+          </HStack>
         </div>
       )}
     </div>

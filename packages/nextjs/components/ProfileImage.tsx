@@ -39,21 +39,16 @@ export default function ProfileImage({ address }: Props) {
   }, [address]);
 
   return (
-    <>
-      {!profile?.profileImage || profile.profileImage.length === 0 ? (
-        <div className="w-full h-full rounded-full" style={{ backgroundColor: getAddressColor(address) }}></div> // Show grey background if there is no image
-      ) : (
+    <div className="w-full h-full rounded-full" style={{ backgroundColor: getAddressColor(address) }}>
+      {!profile?.profileImage || profile.profileImage.length === 0 ? null : (
         <Link href={`https://universaleverything.io/${address}`} target="_blank">
-          <Image
+          <img
             src={profile.profileImage[0].url.replace("ipfs://", "https://api.universalprofile.cloud/ipfs/")}
-            alt="Hero Profile"
-            className="rounded-full object-cover"
-            fill
-            sizes="(max-width: 768px) 100vw"
-            priority={true}
+            alt="Profile"
+            className="w-full h-full rounded-full object-cover"
           />
         </Link>
       )}
-    </>
+    </div>
   );
 }

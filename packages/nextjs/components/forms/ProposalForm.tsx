@@ -6,6 +6,7 @@ type Props = {};
 export default function ProposalForm({}: Props) {
   return (
     <div className="p-4 flex flex-col">
+      <h1 className="text-2xl font-bold mb-4">How can you contribute?</h1>
       <Input placeholder="Title" className="bg-gray-100 mb-3 pl-2" required />
       <Input placeholder="Description(Markdown supported)" className="bg-gray-100 mb-3 pl-2" />
       <Input placeholder="Recipient address" className="bg-gray-100 pl-2" required />

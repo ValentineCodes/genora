@@ -1,19 +1,31 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Input } from "@chakra-ui/react";
 import { LuHeartHandshake } from "react-icons/lu";
-import { formatEther } from "viem";
-import { useAccount } from "wagmi";
-import { useWatchBalance } from "~~/hooks/scaffold-eth";
+import { formatEther, parseEther } from "viem";
+import { useAccount, useWriteContract } from "wagmi";
+import { useDeployedContractInfo, useWatchBalance } from "~~/hooks/scaffold-eth";
 import { useGlobalState } from "~~/services/store/store";
+import { Proposal } from "~~/types/contract";
+import { truncateAddress } from "~~/utils/helpers";
 
-export default function DonationForm() {
+type Props = {
+  proposal: Proposal;
+  onSuccess?: () => void;
+};
+
+export default function DonationForm({ proposal, onSuccess }: Props) {
   const [nativeValue, setNativeValue] = useState(""); // Always store value in LYX
   const [dollarValue, setDollarValue] = useState("");
   const [isDollar, setIsDollar] = useState(true); // Toggle USD/LYX
+  const [isDonating, setIsDonating] = useState(false);
 
   const account = useAccount();
   const { data: balance } = useWatchBalance({ address: account.address });
   const nativeCurrencyPrice = useGlobalState(state => state.nativeCurrency.price);
+
+  const { data: genora } = useDeployedContractInfo("Genora");
+
+  const { writeContractAsync } = useWriteContract();
 
   const formattedBalance = balance ? Number(formatEther(balance.value)) : 0;
 
@@ -45,13 +57,56 @@ export default function DonationForm() {
   const displayConversion = isDollar ? nativeValue : dollarValue;
   const isBalanceInsufficient = Number(nativeValue) > formattedBalance;
 
+  const donate = async () => {
+    if (nativeValue == "") {
+      alert("Please input a donation amount!");
+      return;
+    }
+
+    if (isBalanceInsufficient) {
+      alert("Insufficient funds!");
+      return;
+    }
+
+    if (!genora) {
+      alert("Loading resources...");
+      return;
+    }
+
+    try {
+      setIsDonating(true);
+
+      await writeContractAsync({
+        abi: genora.abi,
+        address: genora.address,
+        functionName: "donate",
+        args: [1n],
+        value: parseEther(nativeValue),
+      });
+
+      alert("Thanks for your support! 🤝");
+
+      setNativeValue("");
+      setDollarValue("");
+
+      if (onSuccess) {
+        onSuccess();
+      }
+    } catch (error) {
+      console.error("Failed to donate: ", error);
+    } finally {
+      setIsDonating(false);
+    }
+  };
+
   return (
-    <div className="p-4">
+    <div className="p-4 bg-white">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">Gitcoin</h1>
-          <strong className="text-xs mb-4">
-            by <span className="font-semibold text-sm text-gray-500">0x123...abcd</span>
+          <h1 className="text-2xl font-bold">{proposal.title}</h1>
+          <strong className="text-xs mb-4 flex items-center gap-1">
+            <span className="text-gray-500">→</span>
+            <span className="font-semibold text-sm text-gray-500">{truncateAddress(proposal.recipientAddress)}</span>
           </strong>
         </div>
 
@@ -86,7 +141,7 @@ export default function DonationForm() {
           <span style={!isDollar ? activeCurrencyStyle : {}}>LYX</span>
         </button>
 
-        <LuHeartHandshake className="text-4xl text-red-300 cursor-pointer mt-10" />
+        <LuHeartHandshake className="text-4xl text-red-300 cursor-pointer mt-10" onClick={donate} />
       </div>
     </div>
   );

@@ -2,7 +2,6 @@
 
 import type { NextPage } from "next";
 import Contributions from "~~/components/Contributions";
-import Donations from "~~/components/Donations";
 import Hero from "~~/components/Hero";
 import Proposals from "~~/components/Proposals";
 
@@ -11,7 +10,6 @@ const Home: NextPage = () => {
     <main className="bg-white">
       <Hero />
       <Contributions />
-      <Donations />
       <Proposals />
 
       <div className="flex items-center gap-2 border border-black rounded-xl px-4 py-1 mb-4 justify-self-center">

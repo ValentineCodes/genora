@@ -21,3 +21,17 @@ export function truncateWords(str: string, wordLimit: number = 7): string {
 export function convertMarkdown(markdown: string): string {
   return new Showdown.Converter().makeHtml(markdown);
 }
+
+/**
+ * Truncates an Ethereum address to a shorter format.
+ *
+ * @param address - The full Ethereum address as a string.
+ * @returns The truncated address in the format: `0x123...abcd`
+ *
+ * @example
+ * ```ts
+ * truncateAddress("0x1234567890abcdef1234567890abcdef12345678");
+ * // Returns: "0x123456...5678"
+ * ```
+ */
+export const truncateAddress = (address: string): string => `${address.slice(0, 6)}...${address.slice(-4)}`;

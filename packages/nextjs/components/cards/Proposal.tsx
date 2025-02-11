@@ -48,7 +48,7 @@ export default function Proposal({ proposal }: Props) {
             </DialogTrigger>
 
             <DialogContent>
-              <DonationForm />
+              <DonationForm proposal={proposal} />
             </DialogContent>
           </DialogRoot>
         </HStack>

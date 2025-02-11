@@ -80,7 +80,7 @@ export default function DonationForm({ proposal, onSuccess }: Props) {
         abi: genora.abi,
         address: genora.address,
         functionName: "donate",
-        args: [1n],
+        args: [proposal.id],
         value: parseEther(nativeValue),
       });
 

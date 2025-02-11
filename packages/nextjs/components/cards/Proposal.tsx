@@ -1,6 +1,7 @@
 import React from "react";
 import ProfileImage from "../ProfileImage";
 import ProposalDetails from "../ProposalDetails";
+import DonationForm from "../forms/DonationForm";
 import { HStack } from "@chakra-ui/react";
 import { RiHeartAdd2Line } from "react-icons/ri";
 import { DialogContent, DialogRoot, DialogTrigger } from "~~/components/ui/dialog";
@@ -40,7 +41,16 @@ export default function Proposal({ proposal }: Props) {
           <div className="w-5 aspect-square rounded-full">
             <ProfileImage address={proposal.proposer} />
           </div>
-          <RiHeartAdd2Line className="text-2xl" />
+
+          <DialogRoot placement="center" motionPreset="slide-in-bottom">
+            <DialogTrigger asChild>
+              <RiHeartAdd2Line className="text-2xl cursor-pointer" />
+            </DialogTrigger>
+
+            <DialogContent>
+              <DonationForm />
+            </DialogContent>
+          </DialogRoot>
         </HStack>
       </div>
     </div>
